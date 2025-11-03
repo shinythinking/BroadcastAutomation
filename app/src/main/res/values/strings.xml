@@ -1,12 +1,3 @@
 <resources>
     <string name="app_name">BroadcastAutomation</string>
-    <string name="info">안내: 방송 대본을 작성하고 음성으로 변환하여 마을에 송출할 수 있습니다.</string>
-    <string name="load_archive">지난 대본 불러오기</string>
-    <string name="refer_archive">이전 방송 참고하기</string>
-    <string name="by_ai">AI로 만들기</string>
-    <string name="script_by_ai">키워드로 대본 자동 생성</string>
-    <string name="app_title">이전리 방송국</string>
-    <string name="make_broadcast">방송 만들기</string>
-    <string name="sript_by_template">템플릿으로 만들기</string>
-    <string name="by_template">육하원칙으로 방송 생성</string>
 </resources>
