@@ -14,13 +14,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.shinythinking.broadcastautomation.R
-import com.shinythinking.broadcastautomation.domain.model.Template
 import com.shinythinking.broadcastautomation.presentation.base.component.BroadcastTopBar
 import com.shinythinking.broadcastautomation.presentation.base.component.EmptyState
 import com.shinythinking.broadcastautomation.presentation.base.component.SelectableCard
@@ -30,17 +32,9 @@ import com.shinythinking.broadcastautomation.ui.theme.BroadcastAutomationTheme
 fun TemplateListScreen(
     onBackClick: () -> Unit,
     onTemplateSelect: (String) -> Unit,
-//    viewModel: TemplateViewModel = hiltViewModel()
+    viewModel: TemplateViewModel = hiltViewModel()
 ) {
-//    val uiState by viewModel.uiState.collectAsState()
-    val dummyTemplate = Template(
-        id = "1",
-        name = "템플릿 1",
-        icon = "🎨",
-        template = "hello world",
-        fields = listOf()
-    )
-    val dummyUiState = TemplateUiState.Success(listOf(dummyTemplate, dummyTemplate, dummyTemplate))
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -51,7 +45,8 @@ fun TemplateListScreen(
             )
         }
     ) { paddingValues ->
-        when (dummyUiState) {
+        val state = uiState
+        when (state) {
             is TemplateUiState.Loading -> {
                 Box(
                     modifier = Modifier
@@ -80,7 +75,7 @@ fun TemplateListScreen(
                         Spacer(modifier = Modifier.height(4.dp))
                     }
 
-                    items(dummyUiState.templates) { template ->
+                    items(state.templates) { template ->
                         SelectableCard(
                             title = template.name,
                             icon = template.icon,
@@ -94,7 +89,7 @@ fun TemplateListScreen(
                 EmptyState(
                     icon = "⚠️",
                     title = stringResource(R.string.error),
-                    description = dummyUiState.message,
+                    description = state.message,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
