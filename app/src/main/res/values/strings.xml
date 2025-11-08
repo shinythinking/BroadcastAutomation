@@ -7,6 +7,9 @@
     <string name="script_by_ai">키워드로 대본 자동 생성</string>
     <string name="app_title">이전리 방송국</string>
     <string name="make_broadcast">방송 만들기</string>
-    <string name="sript_by_template">템플릿으로 만들기</string>
+    <string name="script_by_template">템플릿으로 만들기</string>
     <string name="by_template">육하원칙으로 방송 생성</string>
+    <string name="select_template">템플릿 선택</string>
+    <string name="plz_select_template">사용할 템플릿을 선택해주세요</string>
+    <string name="error">오류 발생</string>
 </resources>
