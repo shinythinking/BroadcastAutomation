@@ -28,15 +28,13 @@ android {
             )
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
+
     buildFeatures {
         compose = true
+    }
+
+    kotlin {
+        jvmToolchain(17)
     }
 }
 
@@ -53,8 +51,12 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
 
+    // Coroutine
+    implementation(libs.kotlinx.coroutines)
+
     // Hilt
     implementation(libs.hilt.android)
+    implementation(libs.androidx.junit.ktx)
     ksp(libs.hilt.compiler)
     testImplementation(libs.hilt.testing)
     kspTest(libs.hilt.compiler)
@@ -62,12 +64,21 @@ dependencies {
     kspAndroidTest(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
-    // Testing (Unit & Instrumentation)
+    // Room
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
+    implementation(libs.room.ktx)
+    androidTestImplementation(libs.room.testing)
+
+    // Testing
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
+    androidTestImplementation(libs.androidx.test.core.ktx)
 
     // Debugging Tools
     debugImplementation(libs.androidx.compose.ui.tooling)
