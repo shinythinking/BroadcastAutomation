@@ -9,5 +9,5 @@ data class Script(
     val title: String,
     val content: String,
     val createdAt: LocalDateTime,
-    val metadata: Map<String, String> = emptyMap()
+    val templateId: String,
 )
