@@ -72,7 +72,7 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     FeatureCard(
-                        title = stringResource(R.string.sript_by_template),
+                        title = stringResource(R.string.script_by_template),
                         description = stringResource(R.string.by_template),
                         icon = Icons.Default.Create,
                         iconColor = Blue500,
