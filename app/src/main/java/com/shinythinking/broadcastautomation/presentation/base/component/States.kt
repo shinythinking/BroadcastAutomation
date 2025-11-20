@@ -26,7 +26,8 @@ import com.shinythinking.broadcastautomation.ui.theme.BroadcastAutomationTheme
 @Composable
 fun LoadingOverlay(
     isLoading: Boolean,
-    message: String = "처리 중..."
+    modifier: Modifier = Modifier,
+    message: String = "처리 중...",
 ) {
     if (isLoading) {
         Dialog(
@@ -37,7 +38,7 @@ fun LoadingOverlay(
             )
         ) {
             Card(
-                modifier = Modifier.padding(16.dp),
+                modifier = modifier.padding(16.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
             ) {
                 Column(
