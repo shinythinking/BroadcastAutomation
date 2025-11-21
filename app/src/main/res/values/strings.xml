@@ -14,4 +14,9 @@
     <string name="error">오류 발생</string>
     <string name="error_happen">오류 발생</string>
     <string name="preview">미리보기</string>
+    <string name="script_confirm">대본 확인</string>
+    <string name="broadcast_script">방송 대본</string>
+    <string name="input_script">방송 내용을 입력하세요</string>
+    <string name="convert_to_voice">음성으로 변환하기</string>
+    <string name="regeneration">다시 생성하기</string>
 </resources>
