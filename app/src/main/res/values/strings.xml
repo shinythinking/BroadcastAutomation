@@ -12,4 +12,6 @@
     <string name="select_template">템플릿 선택</string>
     <string name="plz_select_template">사용할 템플릿을 선택해주세요</string>
     <string name="error">오류 발생</string>
+    <string name="error_happen">오류 발생</string>
+    <string name="preview">미리보기</string>
 </resources>
