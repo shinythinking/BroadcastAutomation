@@ -19,7 +19,7 @@ fun ScriptEntity.toDomain(): Script {
     )
 }
 
-fun Script.toEntity(generationMethod: String = "UNKNOWN"): ScriptEntity {
+fun Script.toEntity(): ScriptEntity {
     return ScriptEntity(
         id = id,
         title = title,

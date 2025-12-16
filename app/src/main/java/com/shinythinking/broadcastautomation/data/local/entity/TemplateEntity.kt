@@ -11,6 +11,7 @@ data class TemplateEntity(
     val icon: String,
     val template: String,
     val order: Int = 0,
+    val isPreinstalled: Boolean = false,
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
 )
