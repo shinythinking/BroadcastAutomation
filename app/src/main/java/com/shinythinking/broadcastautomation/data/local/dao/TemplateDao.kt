@@ -28,6 +28,9 @@ interface TemplateDao {
     @Query("SELECT * FROM template_fields WHERE templateId = :templateId ORDER BY `order` ASC")
     suspend fun getFieldsForTemplate(templateId: String): List<TemplateFieldEntity>
 
+    @Query("SELECT COUNT(*) FROM templates WHERE isPreinstalled = 1")
+    suspend fun getPreinstalledTemplateCount(): Int
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTemplate(template: TemplateEntity)
 
