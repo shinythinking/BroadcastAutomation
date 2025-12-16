@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "BroadcastAutomation"
 include(":app")
+include(":solapi-sdk")

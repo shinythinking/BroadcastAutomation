@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt)  // 추가 - 중요!
+    alias(libs.plugins.hilt)
     alias(libs.plugins.room)
 }
 
@@ -20,6 +20,16 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val apiKey = localProperties.getProperty("API_KEY")
+        val apiSecretKey = localProperties.getProperty("API_SECRET_KEY")
+        val phoneFrom = localProperties.getProperty("PHONE_FROM")
+        val phoneTo = localProperties.getProperty("PHONE_TO")
+
+        buildConfigField("String", "API_KEY", "\"$apiKey\"")
+        buildConfigField("String", "API_SECRET_KEY", "\"$apiSecretKey\"")
+        buildConfigField("String", "PHONE_FROM", "\"$phoneFrom\"")
+        buildConfigField("String", "PHONE_TO", "\"$phoneTo\"")
     }
 
     buildTypes {
@@ -86,7 +96,8 @@ dependencies {
     implementation(libs.ktor.client.logging)
 
     // Solapi
-    implementation(libs.solapi.sdk)
+//    implementation(libs.solapi.sdk)
+    implementation(project(":solapi-sdk"))
 
     // Testing
     testImplementation(libs.junit)
