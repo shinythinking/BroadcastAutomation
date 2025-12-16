@@ -85,6 +85,9 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.client.logging)
 
+    // Solapi
+    implementation(libs.solapi.sdk)
+
     // Testing
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
