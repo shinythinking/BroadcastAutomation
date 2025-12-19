@@ -30,7 +30,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.shinythinking.broadcastautomation.domain.model.Script
 import com.shinythinking.broadcastautomation.ui.theme.BroadcastAutomationTheme
+import java.time.LocalDateTime
 
 @Composable
 fun FeatureCard(
@@ -247,8 +249,7 @@ fun SelectableCard(
 
 @Composable
 fun ArchiveItem(
-    script: String,
-//    script: BroadcastScript,
+    script: Script,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -281,16 +282,14 @@ fun ArchiveItem(
                     modifier = Modifier.weight(1f)
                 )
                 Text(
-                    text = "2025.",
-//                    text = script.createdAt.toLocalDate().toString(),
+                    text = script.createdAt.toLocalDate().toString(),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "content",
-//                text = script.content,
+                text = script.content,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 2,
@@ -327,7 +326,13 @@ fun PreviewCards() {
             Spacer(Modifier.height(40.dp))
 
             ArchiveItem(
-                script = "s",
+                script = Script(
+                    id = "1",
+                    title = "title",
+                    content = "content",
+                    createdAt = LocalDateTime.now(),
+                    templateId = "templateId"
+                ),
                 onClick = {}
             )
         }
