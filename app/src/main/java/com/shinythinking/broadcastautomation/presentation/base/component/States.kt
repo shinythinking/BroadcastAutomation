@@ -65,7 +65,9 @@ fun EmptyState(
     icon: String,
     title: String,
     description: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    retryEnable: Boolean = false,
+    retryAction: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -91,6 +93,14 @@ fun EmptyState(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
         )
+        Spacer(modifier = Modifier.height(20.dp))
+        if (retryEnable) {
+            PrimaryButton(
+                text = "다시 시도",
+                onClick = retryAction,
+            )
+        }
+
     }
 }
 
@@ -100,8 +110,11 @@ fun EmptyState(
 fun StatesPreview() {
     Column {
         BroadcastAutomationTheme {
-            LoadingOverlay(
-                isLoading = true
+            EmptyState(
+                icon = "😢",
+                title = "No Data",
+                description = "There is no data to display.",
+                retryEnable = true
             )
         }
     }
