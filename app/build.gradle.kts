@@ -34,11 +34,13 @@ android {
         val apiSecretKey = localProperties.getProperty("API_SECRET_KEY")
         val phoneFrom = localProperties.getProperty("PHONE_FROM")
         val phoneTo = localProperties.getProperty("PHONE_TO")
+        val geminiApikey = localProperties.getProperty("GEMINI_API_KEY")
 
         buildConfigField("String", "API_KEY", "\"$apiKey\"")
         buildConfigField("String", "API_SECRET_KEY", "\"$apiSecretKey\"")
         buildConfigField("String", "PHONE_FROM", "\"$phoneFrom\"")
         buildConfigField("String", "PHONE_TO", "\"$phoneTo\"")
+        buildConfigField("String", "GEMINI_API_KEY", "\"$geminiApikey\"")
     }
 
     buildTypes {
@@ -97,13 +99,12 @@ dependencies {
     implementation(libs.room.ktx)
     androidTestImplementation(libs.room.testing)
 
-    // ktor
-    implementation(platform(libs.ktor.bom))
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.okhttp)
-    implementation(libs.ktor.client.content.negotiation)
-    implementation(libs.ktor.serialization.kotlinx.json)
-    implementation(libs.ktor.client.logging)
+    // Retrofit
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.kotlinx.serialization)
+    implementation(libs.okhttp.core)
+    implementation(libs.okhttp.logging)
+    implementation(libs.kotlinx.serialization.json)
 
     // Solapi
 //    implementation(libs.solapi.sdk)
