@@ -55,6 +55,7 @@ fun ArchiveScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val searchQuery by viewModel.searchQuery.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.events.collectLatest { event ->
@@ -68,6 +69,7 @@ fun ArchiveScreen(
 
     ArchiveContent(
         uiState = uiState,
+        searchQuery = searchQuery,
         onBackClick = onBackClick,
         onSearchQueryChange = viewModel::updateSearchQuery,
         onScriptClick = onScriptSelect,
@@ -139,6 +141,7 @@ private fun DismissBackground(dismissState: SwipeToDismissBoxState) {
 @Composable
 fun ArchiveContent(
     uiState: ArchiveUiState,
+    searchQuery: String,
     onBackClick: () -> Unit,
     onSearchQueryChange: (String) -> Unit,
     onScriptClick: (String) -> Unit,
@@ -177,7 +180,7 @@ fun ArchiveContent(
                         tonalElevation = 2.dp
                     ) {
                         OutlinedTextField(
-                            value = uiState.searchQuery,
+                            value = searchQuery,
                             onValueChange = onSearchQueryChange,
                             modifier = Modifier
                                 .fillMaxWidth()
