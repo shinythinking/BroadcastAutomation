@@ -1,5 +1,6 @@
 package com.shinythinking.broadcastautomation.data.remote
 
+import android.util.Log
 import com.shinythinking.broadcastautomation.BuildConfig
 import com.shinythinking.broadcastautomation.data.model.MessageDto
 import com.solapi.sdk.message.dto.request.SendRequestConfig
@@ -35,6 +36,9 @@ class SolapiDataSource @Inject constructor(
             Result.success(Unit)
 
         } catch (exception: SolapiMessageNotReceivedException) {
+            Log.d("viewmodel", "예상치 못한 오류: ${exception.message}")
+            Log.d("viewmodel", "예상치 못한 오류: ${exception.stackTrace}")
+            Log.d("viewmodel", "예상치 못한 오류: ${exception.cause}")
             Result.failure(
                 Exception(
                     "메시지 전송 실패: ${exception.message}/n${exception.failedMessageList}",
@@ -42,6 +46,9 @@ class SolapiDataSource @Inject constructor(
                 )
             )
         } catch (exception: Exception) {
+            Log.d("viewmodel", "예상치 못한 오류: ${exception.message}")
+            Log.d("viewmodel", "예상치 못한 오류: ${exception.stackTrace}")
+            Log.d("viewmodel", "예상치 못한 오류: ${exception.cause}")
             Result.failure(
                 Exception("예상치 못한 오류: ${exception.message}", exception)
             )

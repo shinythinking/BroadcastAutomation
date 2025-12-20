@@ -274,8 +274,7 @@ fun ArchiveItem(
                 verticalAlignment = Alignment.Top
             ) {
                 Text(
-                    text = "title",
-//                    text = script.title,
+                    text = script.title,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface,
