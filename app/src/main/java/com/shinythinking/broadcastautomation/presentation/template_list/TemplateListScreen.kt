@@ -1,30 +1,29 @@
-package com.shinythinking.broadcastautomation.presentation.template
+package com.shinythinking.broadcastautomation.presentation.template_list
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.shinythinking.broadcastautomation.R
+import com.shinythinking.broadcastautomation.domain.model.Template
 import com.shinythinking.broadcastautomation.presentation.base.component.BroadcastTopBar
 import com.shinythinking.broadcastautomation.presentation.base.component.EmptyState
+import com.shinythinking.broadcastautomation.presentation.base.component.LoadingOverlay
 import com.shinythinking.broadcastautomation.presentation.base.component.SelectableCard
 import com.shinythinking.broadcastautomation.ui.theme.BroadcastAutomationTheme
 
@@ -32,10 +31,23 @@ import com.shinythinking.broadcastautomation.ui.theme.BroadcastAutomationTheme
 fun TemplateListScreen(
     onBackClick: () -> Unit,
     onTemplateSelect: (String) -> Unit,
-    viewModel: TemplateViewModel = hiltViewModel()
+    viewModel: TemplateListViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    TemplateListContent(
+        uiState = uiState,
+        onTemplateSelect = onTemplateSelect,
+        onBackClick = onBackClick
+    )
+}
+
+@Composable
+fun TemplateListContent(
+    uiState: TemplateListUiState,
+    onTemplateSelect: (String) -> Unit,
+    onBackClick: () -> Unit
+) {
     Scaffold(
         topBar = {
             BroadcastTopBar(
@@ -47,18 +59,17 @@ fun TemplateListScreen(
     ) { paddingValues ->
         val state = uiState
         when (state) {
-            is TemplateUiState.Loading -> {
-                Box(
+            is TemplateListUiState.Loading -> {
+                LoadingOverlay(
+                    isLoading = true,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+                    message = "잠시만 기다려주세요~"
+                )
             }
 
-            is TemplateUiState.Success -> {
+            is TemplateListUiState.Success -> {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
@@ -85,7 +96,7 @@ fun TemplateListScreen(
                 }
             }
 
-            is TemplateUiState.Error -> {
+            is TemplateListUiState.Error -> {
                 EmptyState(
                     icon = "⚠️",
                     title = stringResource(R.string.error),
@@ -103,10 +114,37 @@ fun TemplateListScreen(
 @Preview(name = "Dark Mode", uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 @Composable
 fun TemplateListScreenPreview() {
+    val templates = listOf(
+        Template(
+            id = "1",
+            name = "마을 회의 공지",
+            icon = "📋",
+            template = "주민 여러분께 알립니다.",
+            fields = emptyList()
+        ),
+        Template(
+            id = "2",
+            name = "결혼식 안내",
+            icon = "💒",
+            template = "경사스러운 소식을 전해드립니다.",
+            fields = emptyList()
+        ),
+        Template(
+            id = "3",
+            name = "긴급 재난 안내",
+            icon = "⚠️",
+            template = "긴급 안내 방송입니다.",
+            fields = emptyList()
+        )
+    )
+
     BroadcastAutomationTheme {
-        TemplateListScreen(
+        TemplateListContent(
             onBackClick = {},
-            onTemplateSelect = {}
+            onTemplateSelect = {},
+            uiState = TemplateListUiState.Success(
+                templates = templates
+            )
         )
     }
 }
