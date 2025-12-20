@@ -4,16 +4,13 @@ import com.shinythinking.broadcastautomation.domain.model.Script
 
 sealed interface ScriptEditUiState {
     data object Loading : ScriptEditUiState
-
-    data class Success(
-        val script: Script?,
-        val content: String,
+    data class Editing(
+        val script: Script,
         val isSaving: Boolean = false
     ) : ScriptEditUiState {
         val isValid: Boolean get() = content.isNotBlank()
-        val isNewScript: Boolean get() = script == null
+        val content: String get() = script.content
     }
-
     data class Error(val message: String) : ScriptEditUiState
 }
 
