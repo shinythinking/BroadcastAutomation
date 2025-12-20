@@ -165,7 +165,8 @@ fun BroadcastDateField(
     onValueChange: (String) -> Unit,
     label: String,
     modifier: Modifier = Modifier,
-    placeholder: String = ""
+    placeholder: String = "",
+    readable: Boolean = false
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
 
@@ -231,7 +232,9 @@ fun BroadcastDateField(
                             val localDate = Instant.ofEpochMilli(millis)
                                 .atZone(ZoneId.systemDefault())
                                 .toLocalDate()
-                            onValueChange(localDate.format(DateTimeFormatter.ISO_LOCAL_DATE))
+                            val time = localDate.format(DateTimeFormatter.ISO_LOCAL_DATE)
+                            if (readable) onValueChange(formatDateToKorean(time))
+                            else onValueChange(time)
                         }
                         showDatePicker = false
                     },
@@ -258,7 +261,8 @@ fun BroadcastTimeField(
     onValueChange: (String) -> Unit,
     label: String,
     modifier: Modifier = Modifier,
-    placeholder: String = ""
+    placeholder: String = "",
+    readable: Boolean = false
 ) {
     var showTimePicker by remember { mutableStateOf(false) }
 
@@ -309,7 +313,11 @@ fun BroadcastTimeField(
             onConfirm = { hour, minute ->
                 val hourStr = hour.toString().padStart(2, '0')
                 val minuteStr = minute.toString().padStart(2, '0')
-                onValueChange("$hourStr:$minuteStr")
+                val time = "$hourStr:$minuteStr"
+
+                if (readable) onValueChange(formatTimeToKorean(time))
+                else onValueChange(time)
+
                 showTimePicker = false
             }
         )

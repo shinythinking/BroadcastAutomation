@@ -162,7 +162,8 @@ private fun SuccessContent(
                                 onValueChange = { onFieldValueChange(field.id, it) },
                                 label = field.name,
                                 placeholder = field.placeholder,
-                                modifier = Modifier.padding(bottom = 12.dp)
+                                modifier = Modifier.padding(bottom = 12.dp),
+                                readable = true
                             )
                         }
 
@@ -172,7 +173,8 @@ private fun SuccessContent(
                                 onValueChange = { onFieldValueChange(field.id, it) },
                                 label = field.name,
                                 placeholder = field.placeholder,
-                                modifier = Modifier.padding(bottom = 12.dp)
+                                modifier = Modifier.padding(bottom = 12.dp),
+                                readable = true
                             )
                         }
 
