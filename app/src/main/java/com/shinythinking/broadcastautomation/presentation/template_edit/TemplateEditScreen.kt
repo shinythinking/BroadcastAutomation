@@ -1,6 +1,5 @@
 package com.shinythinking.broadcastautomation.presentation.template_edit
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -34,7 +33,9 @@ import com.shinythinking.broadcastautomation.R
 import com.shinythinking.broadcastautomation.domain.model.FieldType
 import com.shinythinking.broadcastautomation.domain.model.Template
 import com.shinythinking.broadcastautomation.domain.model.TemplateField
+import com.shinythinking.broadcastautomation.presentation.base.component.BroadcastDateField
 import com.shinythinking.broadcastautomation.presentation.base.component.BroadcastTextField
+import com.shinythinking.broadcastautomation.presentation.base.component.BroadcastTimeField
 import com.shinythinking.broadcastautomation.presentation.base.component.BroadcastTopBar
 import com.shinythinking.broadcastautomation.presentation.base.component.LoadingOverlay
 import com.shinythinking.broadcastautomation.presentation.base.component.PrimaryButton
@@ -154,13 +155,37 @@ private fun SuccessContent(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 state.template.fields.forEach { field ->
-                    BroadcastTextField(
-                        value = state.fieldValues[field.id] ?: "",
-                        onValueChange = { onFieldValueChange(field.id, it) },
-                        label = field.name,
-                        placeholder = field.placeholder,
-                        modifier = Modifier.padding(bottom = 12.dp)
-                    )
+                    when (field.type) {
+                        FieldType.DATE -> {
+                            BroadcastDateField(
+                                value = state.fieldValues[field.id] ?: "",
+                                onValueChange = { onFieldValueChange(field.id, it) },
+                                label = field.name,
+                                placeholder = field.placeholder,
+                                modifier = Modifier.padding(bottom = 12.dp)
+                            )
+                        }
+
+                        FieldType.TIME -> {
+                            BroadcastTimeField(
+                                value = state.fieldValues[field.id] ?: "",
+                                onValueChange = { onFieldValueChange(field.id, it) },
+                                label = field.name,
+                                placeholder = field.placeholder,
+                                modifier = Modifier.padding(bottom = 12.dp)
+                            )
+                        }
+
+                        else -> {
+                            BroadcastTextField(
+                                value = state.fieldValues[field.id] ?: "",
+                                onValueChange = { onFieldValueChange(field.id, it) },
+                                label = field.name,
+                                placeholder = field.placeholder,
+                                modifier = Modifier.padding(bottom = 12.dp)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -193,7 +218,7 @@ private fun SuccessContent(
         PrimaryButton(
             text = "대본 생성하기",
             onClick = onSaveClick,
-            enabled = state.isValid() && !state.isGenerating
+            enabled = !state.isGenerating
         )
 
         if (state.isGenerating) {
@@ -239,55 +264,120 @@ private fun ErrorContent(
     }
 }
 
-@Preview(name = "Light Mode", showBackground = true)
-@Preview(name = "Dark Mode", uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
+@Preview(
+    name = "템플릿 편집 - 로딩",
+    showBackground = true,
+    showSystemUi = true
+)
 @Composable
-fun TemplateEditSuccessScreenPreview() {
-    val tf = TemplateField(
-        id = "1",
-        name = "회의 날짜",
-        type = FieldType.DATE,
-        placeholder = "2025-10-13",
-    )
-    val template = Template(
-        id = "template_village_meeting",
-        name = "마을 회의 공지",
-        icon = "📋",
-        template = "",
-        fields = listOf(tf)
-    )
-    val uiState = TemplateEditUiState.Success(
-        template = template,
-        fieldValues = emptyMap(),
-        generatedScript = "",
-    )
+fun TemplateEditLoadingPreview() {
     BroadcastAutomationTheme {
         TemplateEditContent(
-            uiState,
+            uiState = TemplateEditUiState.Loading,
             onBackClick = {},
-            onRetryClick = {},
             onFieldValueChange = { _, _ -> },
             onSaveClick = {},
+            onRetryClick = {},
             snackbarHostState = SnackbarHostState()
         )
     }
 }
 
-@Preview(name = "Light Mode", showBackground = true)
-@Preview(name = "Dark Mode", uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
+@Preview(
+    name = "템플릿 편집 - 편집 중",
+    showBackground = true,
+    showSystemUi = true
+)
 @Composable
-fun TemplateEditErrorScreenPreview() {
-    val uiState = TemplateEditUiState.Error(
-        message = "error message"
+fun TemplateEditEditingPreview() {
+    val template = Template(
+        id = "template_meeting",
+        name = "마을 회의 공지",
+        icon = "📋",
+        template = "주민 여러분께 알립니다. [날짜] [시간]에 [장소]에서 마을 회의가 있을 예정입니다.",
+        fields = listOf(
+            TemplateField("날짜", "회의 날짜", FieldType.DATE, "2025-10-13"),
+            TemplateField("시간", "회의 시간", FieldType.TIME, "14:00"),
+            TemplateField("장소", "장소", FieldType.LOCATION, "마을회관")
+        )
     )
+
+    val fieldValues = mapOf(
+        "날짜" to "2025-10-13",
+        "시간" to "14:00",
+        "장소" to "마을회관"
+    )
+
+    val preview = "주민 여러분께 알립니다. 2025-10-13 14:00에 마을회관에서 마을 회의가 있을 예정입니다."
+
     BroadcastAutomationTheme {
         TemplateEditContent(
-            uiState,
+            uiState = TemplateEditUiState.Success(
+                template = template,
+                fieldValues = fieldValues,
+                generatedScript = preview,
+                isGenerating = false
+            ),
             onBackClick = {},
-            onRetryClick = {},
             onFieldValueChange = { _, _ -> },
             onSaveClick = {},
+            onRetryClick = {},
             snackbarHostState = SnackbarHostState()
+        )
+    }
+}
+
+@Preview(
+    name = "템플릿 편집 - 생성 중",
+    showBackground = true,
+    showSystemUi = true
+)
+@Composable
+fun TemplateEditGeneratingPreview() {
+    val template = Template(
+        id = "template_meeting",
+        name = "마을 회의 공지",
+        icon = "📋",
+        template = "주민 여러분께 알립니다. [날짜] [시간]에 [장소]에서 마을 회의가 있을 예정입니다.",
+        fields = listOf(
+            TemplateField("날짜", "회의 날짜", FieldType.DATE, ""),
+            TemplateField("시간", "회의 시간", FieldType.TIME, ""),
+            TemplateField("장소", "장소", FieldType.LOCATION, "")
+        )
+    )
+
+    BroadcastAutomationTheme {
+        TemplateEditContent(
+            uiState = TemplateEditUiState.Success(
+                template = template,
+                fieldValues = mapOf("날짜" to "", "시간" to "", "장소" to ""),
+                generatedScript = "",
+                isGenerating = true
+            ),
+            onBackClick = {},
+            onFieldValueChange = { _, _ -> },
+            onSaveClick = {},
+            snackbarHostState = SnackbarHostState(),
+            onRetryClick = {}
+        )
+    }
+}
+
+@Preview(
+    name = "템플릿 편집 - 에러",
+    showBackground = true,
+    showSystemUi = true
+)
+@Composable
+fun TemplateEditErrorPreview() {
+    BroadcastAutomationTheme {
+        TemplateEditContent(
+            uiState = TemplateEditUiState.Error("템플릿을 찾을 수 없습니다"),
+            onBackClick = {},
+            onFieldValueChange = { _, _ -> },
+            onSaveClick = {},
+            snackbarHostState = SnackbarHostState(),
+            onRetryClick = {}
         )
     }
 }
