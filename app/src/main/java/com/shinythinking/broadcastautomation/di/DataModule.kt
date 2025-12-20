@@ -1,9 +1,12 @@
 package com.shinythinking.broadcastautomation.di
 
 import com.shinythinking.broadcastautomation.BuildConfig
+import com.shinythinking.broadcastautomation.data.remote.GeminiDataSource
 import com.shinythinking.broadcastautomation.data.remote.SolapiDataSource
 import com.shinythinking.broadcastautomation.data.repository.BroadcastRepositoryImpl
+import com.shinythinking.broadcastautomation.data.repository.LLMRepositoryImpl
 import com.shinythinking.broadcastautomation.domain.repository.BroadcastRepository
+import com.shinythinking.broadcastautomation.domain.repository.LLMRepository
 import com.solapi.sdk.SolapiClient
 import com.solapi.sdk.message.service.DefaultMessageService
 import dagger.Module
@@ -39,5 +42,16 @@ object DataModule {
         solapiDataSource: SolapiDataSource
     ): BroadcastRepository {
         return BroadcastRepositoryImpl(solapiDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideLLMRepository(
+        geminiDataSource: GeminiDataSource
+    ): LLMRepository {
+        return LLMRepositoryImpl(
+            geminiDataSource = geminiDataSource,
+            apiKey = BuildConfig.GEMINI_API_KEY
+        )
     }
 }
