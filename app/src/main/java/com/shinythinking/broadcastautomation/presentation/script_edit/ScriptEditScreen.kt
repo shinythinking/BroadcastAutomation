@@ -1,7 +1,5 @@
 package com.shinythinking.broadcastautomation.presentation.script_edit
 
-import android.content.res.Configuration
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,7 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -32,21 +29,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.shinythinking.broadcastautomation.R
-import com.shinythinking.broadcastautomation.domain.model.Script
 import com.shinythinking.broadcastautomation.presentation.base.component.BroadcastMultilineTextField
 import com.shinythinking.broadcastautomation.presentation.base.component.BroadcastTopBar
+import com.shinythinking.broadcastautomation.presentation.base.component.EmptyState
 import com.shinythinking.broadcastautomation.presentation.base.component.PrimaryButton
-import com.shinythinking.broadcastautomation.presentation.base.component.SecondaryButton
 import com.shinythinking.broadcastautomation.ui.theme.BroadcastAutomationTheme
 import kotlinx.coroutines.flow.collectLatest
-import java.time.LocalDateTime
 
 @Composable
 fun ScriptEditScreen(
-    scriptId: String?,
     onBackClick: () -> Unit,
     onConvertToVoice: (String) -> Unit,
-    viewModel: ScriptEditViewmodel = hiltViewModel()
+    viewModel: ScriptEditViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -69,9 +63,9 @@ fun ScriptEditScreen(
         uiState = uiState,
         snackbarHostState = snackbarHostState,
         onBackClick = onBackClick,
-        updateContent = viewModel::updateContent,
-        saveAndContinue = viewModel::saveAndContinue,
-        retry = viewModel::retry
+        saveAndConvertToVoice = { viewModel.saveAndContinue() },
+        updateContent = { viewModel.updateContent(it) },
+        onRetryClick = { viewModel.retry() }
     )
 }
 
@@ -80,14 +74,14 @@ fun ScriptEditContent(
     uiState: ScriptEditUiState,
     snackbarHostState: SnackbarHostState,
     onBackClick: () -> Unit,
+    saveAndConvertToVoice: () -> Unit,
     updateContent: (String) -> Unit,
-    saveAndContinue: () -> Unit,
-    retry: () -> Unit
+    onRetryClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
             BroadcastTopBar(
-                title = stringResource(R.string.script_confirm),
+                title = "대본 확인",
                 showBackButton = true,
                 onBackClick = onBackClick
             )
@@ -106,7 +100,7 @@ fun ScriptEditContent(
                 }
             }
 
-            is ScriptEditUiState.Success -> {
+            is ScriptEditUiState.Editing -> {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -124,8 +118,8 @@ fun ScriptEditContent(
                             BroadcastMultilineTextField(
                                 value = state.content,
                                 onValueChange = { if (!state.isSaving) updateContent(it) },
-                                label = stringResource(R.string.broadcast_script),
-                                placeholder = stringResource(R.string.input_script),
+                                label = "방송 대본",
+                                placeholder = "방송 내용을 입력하세요",
                                 minHeight = 200
                             )
                         }
@@ -134,16 +128,10 @@ fun ScriptEditContent(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     PrimaryButton(
-                        text = stringResource(R.string.convert_to_voice),
-                        onClick = { saveAndContinue() },
+                        text = "음성으로 변환하기",
+                        onClick = { saveAndConvertToVoice() },
                         enabled = state.isValid && !state.isSaving,
                         modifier = Modifier.padding(bottom = 12.dp)
-                    )
-
-                    SecondaryButton(
-                        text = stringResource(R.string.regeneration),
-                        onClick = { /* TODO: Implement regeneration */ },
-                        enabled = !state.isSaving
                     )
 
                     if (state.isSaving) {
@@ -154,93 +142,33 @@ fun ScriptEditContent(
             }
 
             is ScriptEditUiState.Error -> {
-                Column(
+                EmptyState(
+                    icon = "⚠️",
+                    title = stringResource(R.string.error),
+                    description = state.message,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(paddingValues)
-                        .padding(32.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(text = "⚠️", style = MaterialTheme.typography.displayLarge)
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(text = "오류 발생", style = MaterialTheme.typography.titleLarge)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = state.message,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(24.dp))
-                    PrimaryButton(
-                        text = "다시 시도",
-                        onClick = { retry() }
-                    )
-                }
+                        .padding(paddingValues),
+                    retryEnable = true,
+                    retryAction = { onRetryClick }
+                )
+
             }
         }
     }
 }
 
-@Preview(name = "Light Mode", showBackground = true)
-@Preview(name = "Dark Mode", uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
+@Preview
 @Composable
-fun ScriptEditSuccessPreview() {
-    val uiState = ScriptEditUiState.Success(
-        script = Script(
-            id = "1",
-            title = "Sample Script",
-            content = "This is a sample script content.",
-            createdAt = LocalDateTime.now(),
-            templateId = "1"
-        ),
-        content = "This is a sample script content.",
-        isSaving = false
-    )
+fun ScriptEditPreview() {
     BroadcastAutomationTheme {
         ScriptEditContent(
-            uiState = uiState,
+            onBackClick = {},
+            uiState = ScriptEditUiState.Error("error"),
             snackbarHostState = SnackbarHostState(),
-            onBackClick = { },
-            updateContent = { },
-            saveAndContinue = { },
-            retry = { }
-        )
-    }
-}
-
-@Preview(name = "Light Mode", showBackground = true)
-@Preview(name = "Dark Mode", uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
-@Composable
-fun ScriptEditErrorPreview() {
-    val uiState = ScriptEditUiState.Error(
-        message = "An error occurred while loading the script.",
-    )
-    BroadcastAutomationTheme {
-        ScriptEditContent(
-            uiState = uiState,
-            snackbarHostState = SnackbarHostState(),
-            onBackClick = { },
-            updateContent = { },
-            saveAndContinue = { },
-            retry = { }
-        )
-    }
-}
-
-@Preview(name = "Light Mode", showBackground = true)
-@Preview(name = "Dark Mode", uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
-@Composable
-fun ScriptEditLoadingPreview() {
-    val uiState = ScriptEditUiState.Loading
-    BroadcastAutomationTheme {
-        ScriptEditContent(
-            uiState = uiState,
-            snackbarHostState = SnackbarHostState(),
-            onBackClick = { },
-            updateContent = { },
-            saveAndContinue = { },
-            retry = { }
+            saveAndConvertToVoice = {},
+            updateContent = {},
+            onRetryClick = {}
         )
     }
 }
